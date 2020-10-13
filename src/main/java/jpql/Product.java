@@ -1,4 +1,4 @@
-package jpal;
+package jpql;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
