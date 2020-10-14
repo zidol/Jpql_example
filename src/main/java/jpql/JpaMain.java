@@ -14,10 +14,11 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            em.persist(member);
+//            Member member = new Member();
+//            member.setUsername("member1");
+//            member.setAge(10);
+//            em.persist(member);
+
 
             //jpql 기본문법
 //            TypedQuery<Member> query = em.createQuery("select m from Member m where m.id = 10", Member.class);
@@ -34,8 +35,8 @@ public class JpaMain {
 //            System.out.println("singleResult.getUsername() = " + singleResult.getUsername());
 
             //프로젝션
-            em.flush();
-            em.clear();
+//            em.flush();
+//            em.clear();
 
             //엔티티 프로젝션 1
 //            List<Member> resultList = em.createQuery("select m.team from Member m", Member.class)
@@ -71,11 +72,82 @@ public class JpaMain {
 //            System.out.println("result[0] = " + result[1]);
 
             //3. new 명령어로 조회
-            List<MemberDTO> resultList = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
-                    .getResultList();
-            MemberDTO memberDTO = resultList.get(0);
-            System.out.println("result[0] = " + memberDTO.getUsername());
-            System.out.println("result[0] = " + memberDTO.getAge());
+//            List<MemberDTO> resultList = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
+//                    .getResultList();
+//            MemberDTO memberDTO = resultList.get(0);
+//            System.out.println("result[0] = " + memberDTO.getUsername());
+//            System.out.println("result[0] = " + memberDTO.getAge());
+
+//            for (int i = 0; i < 100; i++) {
+//                Member member = new Member();
+//                member.setUsername("member" +i);
+//                member.setAge(i);
+//                em.persist(member);
+//            }
+//
+//            em.flush();
+//            em.clear();
+
+//            List<Member> resultList = em.createQuery("select m from Member m order by m.age desc", Member.class)
+//                    .setFirstResult(0)
+//                    .setMaxResults(10)
+//                    .getResultList();
+//            System.out.println("resultList.size() = " + resultList.size());
+//            for (Member member1 : resultList) {
+//                System.out.println("member1.toString() = " + member1.toString());
+//            }
+
+            //조인
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("관리자");
+            member.setAge(10);
+            member.setType(MemberType.ADMIN);
+            member.setTeam(team);
+
+            em.persist(member);
+
+            em.flush();
+            em.clear();
+
+//            List<Member> resultList = em.createQuery("select m from Member m left outer join m.team t", Member.class) // left(outer) 조인
+//            List<Member> resultList = em.createQuery("select m from Member m, Team t where m.username = t.name", Member.class)//세타 조인
+//            List<Member> resultList = em.createQuery("select m from Member m left join m.team t on t.name = 'teamA'", Member.class) //조인 대상 필터링
+//            List<Member> resultList = em.createQuery("select m from Member m left join Team t on m.username = t.name", Member.class) //연관관계 없는 조인
+//            String qlString = "select m.username, 'HELLO', TRUE from Member m " +
+//                    "where m.type = :userType";     // ENUM은 풀 패키지 명
+//            List<Object[]> resultList = em.createQuery(qlString)
+//                    .setParameter("userType", MemberType.ADMIN)
+//                    .getResultList();
+
+//            for (Object[] objects : resultList) {
+//                System.out.println("objects[0] = " + objects[0]);
+//                System.out.println("objects[0] = " + objects[1]);
+//                System.out.println("objects[0] = " + objects[2]);
+//            }
+
+            //조건식 - case 식
+//            String query = "select " +
+//                                    "case when m.age <= 10 then '학생요금' " +
+//                                    "     when m.age >= 60 then '경로요금' " +
+//                                    "     else '일반요금' " +
+//                                    "end " +
+//                    "from Member m";
+//            List<String> result = em.createQuery(query, String.class).getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+            //username = null
+//            String query = "select coalesce(m.username, '이름 없는 회원') as username from Member m ";
+            String query = "select nullif(m.username, '관리자') as username from Member m ";
+            List<String> result = em.createQuery(query, String.class).getResultList();
+            for (String s : result) {
+                System.out.println("s = " + s);
+            }
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
