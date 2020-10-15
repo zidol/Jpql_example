@@ -3,6 +3,7 @@ package jpql;
 
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 public class JpaMain {
@@ -102,18 +103,18 @@ public class JpaMain {
 //            team.setName("teamA");
 //            em.persist(team);
 
-            Member member = new Member();
-            member.setUsername("관리자1");
-            member.setAge(10);
-            em.persist(member);
-
-            Member member2 = new Member();
-            member2.setUsername("관리자2");
-            member2.setAge(10);
-            em.persist(member2);
-
-            em.flush();
-            em.clear();
+//            Member member = new Member();
+//            member.setUsername("관리자1");
+//            member.setAge(10);
+//            em.persist(member);
+//
+//            Member member2 = new Member();
+//            member2.setUsername("관리자2");
+//            member2.setAge(10);
+//            em.persist(member2);
+//
+//            em.flush();
+//            em.clear();
 
 //            List<Member> resultList = em.createQuery("select m from Member m left outer join m.team t", Member.class) // left(outer) 조인
 //            List<Member> resultList = em.createQuery("select m from Member m, Team t where m.username = t.name", Member.class)//세타 조인
@@ -160,13 +161,59 @@ public class JpaMain {
 //            @OrderColumn  => index 함수 쓸때
 
 //            String query = "select function('group_concat', m.username) from Member m";
-            String query = "select group_concat(m.username) from Member m";
-            List<String> result = em.createQuery(query, String.class)
-                    .getResultList();
-            for (String s : result) {
-                System.out.println("s = " + s);
-            }
+//            String query = "select group_concat(m.username) from Member m";
+//            List<String> result = em.createQuery(query, String.class)
+//                    .getResultList();
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
 
+
+            //JPQL 경로 표현식
+
+            Team team = new Team();
+            em.persist(team);
+            Member member = new Member();
+            member.setUsername("관리자1");
+            member.setAge(10);
+            member.setTeam(team);
+            em.persist(member);
+
+            Member member2 = new Member();
+            member2.setUsername("관리자2");
+            member2.setAge(10);
+            member2.setTeam(team);
+            em.persist(member2);
+
+
+
+            em.flush();
+            em.clear();
+
+//            String query = "select m.team from Member m";       // 묵시적 내부조인 나감
+//            List<Team> result = em.createQuery(query, Team.class)
+//                    .getResultList();
+//
+//            for (Team s : result) {
+//                System.out.println("s = " + s);
+//            }
+
+//            String query = "select t.members from Team t";       // 묵시적 내부조인 나감
+//            Collection result = em.createQuery(query, Collection.class)
+//                    .getResultList();
+//            for (Object o : result) {
+//                System.out.println(o);
+//            }
+
+
+//            String query = "select t.members.size from Team t";       // 묵시적 내부조인 나감
+//            Integer result = em.createQuery(query, Integer.class)
+//                    .getSingleResult();
+//            String query = "select t.members from Team t";       // t.members.username 탐색 안됨
+            String query = "select m from Team t join t.members m";    //명시적 조인을 해야함
+            List<Member> resultList = em.createQuery(query, Member.class)
+                    .getResultList();
+            System.out.println("result = " + resultList);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
