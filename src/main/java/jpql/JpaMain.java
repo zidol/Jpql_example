@@ -169,26 +169,26 @@ public class JpaMain {
 //            }
 
 
-            //JPQL 경로 표현식
+            // 경로 표현식
 
-            Team team = new Team();
-            em.persist(team);
-            Member member = new Member();
-            member.setUsername("관리자1");
-            member.setAge(10);
-            member.setTeam(team);
-            em.persist(member);
-
-            Member member2 = new Member();
-            member2.setUsername("관리자2");
-            member2.setAge(10);
-            member2.setTeam(team);
-            em.persist(member2);
-
-
-
-            em.flush();
-            em.clear();
+//            Team team = new Team();
+//            em.persist(team);
+//            Member member = new Member();
+//            member.setUsername("관리자1");
+//            member.setAge(10);
+//            member.setTeam(team);
+//            em.persist(member);
+//
+//            Member member2 = new Member();
+//            member2.setUsername("관리자2");
+//            member2.setAge(10);
+//            member2.setTeam(team);
+//            em.persist(member2);
+//
+//
+//
+//            em.flush();
+//            em.clear();
 
 //            String query = "select m.team from Member m";       // 묵시적 내부조인 나감
 //            List<Team> result = em.createQuery(query, Team.class)
@@ -210,10 +210,61 @@ public class JpaMain {
 //            Integer result = em.createQuery(query, Integer.class)
 //                    .getSingleResult();
 //            String query = "select t.members from Team t";       // t.members.username 탐색 안됨
-            String query = "select m from Team t join t.members m";    //명시적 조인을 해야함
-            List<Member> resultList = em.createQuery(query, Member.class)
+//            String query = "select m from Team t join t.members m";    //명시적 조인을 해야함
+//            List<Member> resultList = em.createQuery(query, Member.class)
+//                    .getResultList();
+//            System.out.println("result = " + resultList);
+
+            //객체지향 쿼리 언어
+            Team teamA = new Team();
+            teamA.setName("팀A");
+            em.persist(teamA);
+
+            Team teamB = new Team();
+            teamB.setName("팀B");
+            em.persist(teamB);
+
+
+            Member member = new Member();
+            member.setUsername("회원1");
+            member.setAge(10);
+            member.setTeam(teamA);
+            em.persist(member);
+
+            Member member2 = new Member();
+            member2.setUsername("회원2");
+            member2.setAge(10);
+            member2.setTeam(teamA);
+            em.persist(member2);
+
+            Member member3 = new Member();
+            member3.setUsername("회원3");
+            member3.setAge(10);
+            member3.setTeam(teamB);
+            em.persist(member3);
+
+
+            em.flush();
+            em.clear();
+
+//            String query = "select m from Member m";    //페치(fetch) 조인을 해야함
+//            String query = "select m from Member m join fetch m.team";
+//            String query = "select t from Team t join fetch t.members";
+//            String query = "select distinct t from Team t join fetch t.members"; //distinct 추가  -> 같은 식별자를 가진  team 엔티티 제거
+            String query = "select distinct t from Team t join fetch t.members"; //
+//            List<Member> resultList = em.createQuery(query, Member.class)
+//                    .getResultList();
+
+            List<Team> resultList = em.createQuery(query, Team.class)
                     .getResultList();
-            System.out.println("result = " + resultList);
+            for (Team team : resultList) {
+//                System.out.println("member1.getUsername() +\", \"+ member.getTeam().getName() = " + member1.getUsername() +", "+ member1.getTeam().getName());
+                System.out.println("team = " + team.getName() +", " + team.getMembers().size());
+                for (Member member1 : team.getMembers()){
+                    System.out.println("-> member = " + member1);
+                }
+            }
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
