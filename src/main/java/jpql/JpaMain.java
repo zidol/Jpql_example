@@ -251,12 +251,13 @@ public class JpaMain {
 //            String query = "select m from Member m join fetch m.team";
 //            String query = "select t from Team t join fetch t.members";
 //            String query = "select distinct t from Team t join fetch t.members"; //distinct 추가  -> 같은 식별자를 가진  team 엔티티 제거
-            String query = "select distinct t from Team t join fetch t.members"; //
+                String query = "select t from Team t where t.name = '팀A'"; //
 //            List<Member> resultList = em.createQuery(query, Member.class)
 //                    .getResultList();
 
             List<Team> resultList = em.createQuery(query, Team.class)
                     .getResultList();
+            System.out.println("resultList.size() = " + resultList.size());
             for (Team team : resultList) {
 //                System.out.println("member1.getUsername() +\", \"+ member.getTeam().getName() = " + member1.getUsername() +", "+ member1.getTeam().getName());
                 System.out.println("team = " + team.getName() +", " + team.getMembers().size());
