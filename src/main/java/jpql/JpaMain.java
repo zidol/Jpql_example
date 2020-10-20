@@ -251,20 +251,32 @@ public class JpaMain {
 //            String query = "select m from Member m join fetch m.team";
 //            String query = "select t from Team t join fetch t.members";
 //            String query = "select distinct t from Team t join fetch t.members"; //distinct 추가  -> 같은 식별자를 가진  team 엔티티 제거
-                String query = "select t from Team t where t.name = '팀A'"; //
+//                String query = "select t from Team t where t.name = '팀A'"; //
 //            List<Member> resultList = em.createQuery(query, Member.class)
 //                    .getResultList();
 
-            List<Team> resultList = em.createQuery(query, Team.class)
-                    .getResultList();
-            System.out.println("resultList.size() = " + resultList.size());
-            for (Team team : resultList) {
+//            List<Team> resultList = em.createQuery(Team, Member.class)
+//                    .setParameter("member", member)
+//                    .getResultList();
+//            for (Team team : resultList) {
 //                System.out.println("member1.getUsername() +\", \"+ member.getTeam().getName() = " + member1.getUsername() +", "+ member1.getTeam().getName());
-                System.out.println("team = " + team.getName() +", " + team.getMembers().size());
-                for (Member member1 : team.getMembers()){
-                    System.out.println("-> member = " + member1);
-                }
-            }
+//                System.out.println("team = " + team.getName() +", " + team.getMembers().size());
+//                for (Member member1 : team.getMembers()){
+//                    System.out.println("-> member = " + member1);
+//                }
+//            }
+            // 엔티티 직접 사용 - 기본키 값
+//            String query = "select m from Member m where m = :member";
+//            String query = "select m from Member m where m.id = :memberId";
+
+            // 엔티티 직접 사용 - 외래키 값
+            String query = "select m.team from Member m where m.team = :team";   //team_id
+
+            List<Member> resultList = em.createQuery(query, Member.class)
+                    .setParameter("team", teamA)
+                    .getResultList();
+            System.out.println("resultList.size() = " + resultList);
+
 
             tx.commit();
         } catch (Exception e) {
