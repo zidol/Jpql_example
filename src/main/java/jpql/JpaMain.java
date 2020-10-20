@@ -244,8 +244,8 @@ public class JpaMain {
             em.persist(member3);
 
 
-            em.flush();
-            em.clear();
+//            em.flush();
+//            em.clear();
 
 //            String query = "select m from Member m";    //페치(fetch) 조인을 해야함
 //            String query = "select m from Member m join fetch m.team";
@@ -278,12 +278,20 @@ public class JpaMain {
 //            System.out.println("resultList.size() = " + resultList);
 
             //Named 쿼리
-            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
-                    .setParameter("username", "회원1")
-                    .getResultList();
-            for (Member member1 : resultList) {
-                System.out.println("member = " + member1);
-            }
+//            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
+//                    .setParameter("username", "회원1")
+//                    .getResultList();
+//            for (Member member1 : resultList) {
+//                System.out.println("member = " + member1);
+//            }
+
+            //벌크 연산
+            //flush 자동으로 호출
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+            em.clear();
+            Member member1 = em.find(Member.class, member.getId());
+            System.out.println("member1 = " + member1);
 
             tx.commit();
         } catch (Exception e) {
