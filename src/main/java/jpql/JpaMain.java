@@ -270,13 +270,20 @@ public class JpaMain {
 //            String query = "select m from Member m where m.id = :memberId";
 
             // 엔티티 직접 사용 - 외래키 값
-            String query = "select m.team from Member m where m.team = :team";   //team_id
+//            String query = "select m.team from Member m where m.team = :team";   //team_id
+//
+//            List<Member> resultList = em.createQuery(query, Member.class)
+//                    .setParameter("team", teamA)
+//                    .getResultList();
+//            System.out.println("resultList.size() = " + resultList);
 
-            List<Member> resultList = em.createQuery(query, Member.class)
-                    .setParameter("team", teamA)
+            //Named 쿼리
+            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
+                    .setParameter("username", "회원1")
                     .getResultList();
-            System.out.println("resultList.size() = " + resultList);
-
+            for (Member member1 : resultList) {
+                System.out.println("member = " + member1);
+            }
 
             tx.commit();
         } catch (Exception e) {

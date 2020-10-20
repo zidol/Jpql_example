@@ -36,7 +36,7 @@ Icon
 # Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
-Network Trash Folder
+Network Trash Folders
 Temporary Items
 .apdisk
 
@@ -54,3 +54,6 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,maven
+
+#class
+*.class
